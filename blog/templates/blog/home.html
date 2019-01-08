@@ -1,0 +1,85 @@
+{% extends "blog/base.html" %}
+{% block content %}
+<form class="form-inline my-2 my-lg-0">
+      
+    {% for post in posts %}
+        <article class="media content-section">
+          <img class="rounded-circle article-img" src="{{ post.author.profile.image.url }}">
+          <div class="media-body">
+            <div class="article-metadata">
+            
+              <a class="mr-2" href="{% url 'user-posts' post.author.username %}"><b>Posted by:-</b>{{ post.author }}</a>
+              <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+            </div>
+              {% if user.is_authenticated %}
+            <h2><a class="article-title" href="{% url 'post-detail' post.id %}"><b>Vehicle Type:-</b>{{ post.vehicle_type }}</a></h2>
+            
+              {% else %}
+              <h2><p><a class="article-title" href="#"><b>Rs.-</b>{{ post.price }}</a></h2></p>
+              {% endif %}
+              
+            <div class="thumbnail">
+              {% if post.image %}
+               <img src='{{ post.image.url }}' class=' img-responsive' />
+               {% endif %}
+             </div><br>
+             <p class="article-content"><b>Model:- </b>{{ post.model }}</p>
+             <p class="article-content"><b>Rs.</b>{{ post.price }}</p>
+
+              <p class="article-content"><b>Place:-</b>{{ post.place }}</p>
+              <p class="article-content"><b>Mileage:-</b> {{ post.mileage }} km/l</p>
+              
+              
+             <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+  View Details
+</button>
+  {% if user.is_authenticated %}
+  <h6><a class="article-title" href="{% url 'post-detail' post.id %}">Click to see details</a></h6>
+<!-- Modal -->
+{% else %}
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Thank You for your Interest!</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Please Login with your account.
+      <p>New User? You need to register with us.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+         
+    </div>
+  </div>
+</div>
+          </div>{% endif %}
+        </article>
+
+    {% endfor %}
+    {% if is_paginated %}
+
+      {% if page_obj.has_previous %}
+        <a class="btn btn-outline-info mb-4" href="?page=1">First</a>
+        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+      {% endif %}
+
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+          <a class="btn btn-info mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+          <a class="btn btn-outline-info mb-4" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.next_page_number }}">Next</a>
+        <a class="btn btn-outline-info mb-4" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+      {% endif %}
+
+    {% endif %}
+{% endblock content %}
